@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.12)
 set(NAME hello-freertos-pico)
 
 include(pico_sdk_import.cmake)
+include(pimoroni_pico_import.cmake)
 
 project(${NAME} C CXX ASM)
 set(CMAKE_C_STANDARD 11)

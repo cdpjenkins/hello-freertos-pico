@@ -2,12 +2,16 @@ add_executable(${NAME}
         main.cpp
         )
 
+include(libraries/pico_unicorn/pico_unicorn)
+
 # Pull in our pico_stdlib which pulls in commonly used features
-target_link_libraries(${NAME} 
-	 pico_stdlib
-     FreeRTOS-Kernel-Heap4 
-	)
-	
+target_link_libraries(${NAME}
+		pico_stdlib
+		FreeRTOS-Kernel-Heap4
+		hardware_pio
+		hardware_dma
+		pico_unicorn)
+
 target_include_directories(${NAME} PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}
      )
