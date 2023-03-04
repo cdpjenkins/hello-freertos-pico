@@ -12,6 +12,7 @@ using namespace pimoroni;
 
 #include "oi.h"
 #include "babi.h"
+#include "clear.h"
 
 #define TASK_PRIORITY		( tskIDLE_PRIORITY + 1UL )
 
@@ -155,6 +156,13 @@ void cli_main([[maybe_unused]] void *params) {
             CLICommand babi_command = CLICommand(babi);
 
             rc = xQueueSendToBack(led_command_queue, (void *) &babi_command, 0);
+            if (rc != pdTRUE) {
+                printf("Failed to send message: %d\n", rc);
+            }
+        } else if (strcmp(line, "clear") == 0) {
+            CLICommand clear_command = CLICommand(clear);
+
+            rc = xQueueSendToBack(led_command_queue, (void *) &clear_command, 0);
             if (rc != pdTRUE) {
                 printf("Failed to send message: %d\n", rc);
             }
