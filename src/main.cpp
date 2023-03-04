@@ -7,6 +7,7 @@ using namespace pimoroni;
 
 #include "FreeRTOS.h"
 #include "task.h"
+#include <queue.h>
 
 #include "oi.h"
 #include "babi.h"
@@ -21,6 +22,24 @@ using namespace pimoroni;
 volatile int counter = 0;
 
 PicoUnicorn pico_unicorn;
+
+struct CLICommand {
+    CLICommand() :
+        pixels(nullptr)
+    {
+
+    }
+
+    explicit CLICommand(const unsigned char *string) :
+        pixels(string)
+    {
+
+    }
+
+    const unsigned char* pixels;
+};
+
+QueueHandle_t led_command_queue;
 
 void task_stats() {
     TaskStatus_t *pxTaskStatusArray;
@@ -102,8 +121,25 @@ void increment_counter_value_main([[maybe_unused]] void *params){
 [[noreturn]]
 void cli_main([[maybe_unused]] void *params) {
     while (true) {
-        task_stats();
-        vTaskDelay(1000);
+        BaseType_t rc;
+
+//        task_stats();
+        CLICommand oi_command = CLICommand(oi);
+
+        rc = xQueueSendToBack(led_command_queue, (void *) &oi_command, 0);
+        if (rc != pdTRUE) {
+            printf("Failed to send message: %d\n", rc);
+        }
+        vTaskDelay(200);
+
+
+        CLICommand babi_command = CLICommand(babi);
+
+        rc = xQueueSendToBack(led_command_queue, (void *) &babi_command, 0);
+        if (rc != pdTRUE) {
+            printf("Failed to send message: %d\n", rc);
+        }
+        vTaskDelay(200);
     }
 }
 
@@ -113,63 +149,30 @@ void leds_main([[maybe_unused]] void *params){
     const int WIDTH = 16;
     const int HEIGHT = 7;
 
-
     pico_unicorn.init();
 
-    while (true) { // Loop forever
+    while (true) {
+        CLICommand command;
+        BaseType_t rc = xQueueReceive(led_command_queue, (void *)&command, 1000);
+        if (rc != pdTRUE) {
+            printf("Failed to read from queue: %d\n", rc);
+        }
 
-        pico_unicorn.clear();
-        printf("About to say oi...\n");
+        printf("Received command, about to display...\n");
         {
             int i = 0;
             for (int y = 0; y < HEIGHT; y++) {
                 for (int x = 0; x < WIDTH; x++) {
-                    pico_unicorn.set_pixel(x, y, oi[i++], oi[i++], oi[i++]);
+                    pico_unicorn.set_pixel(x, y, command.pixels[i++], command.pixels[i++], command.pixels[i++]);
                 }
             }
         }
-        printf("said oi\n");
-        vTaskDelay(1000);
-
-        pico_unicorn.clear();
-        printf("About to say babi\n");
-        {
-            int i = 0;
-            for (int y = 0; y < HEIGHT; y++) {
-                for (int x = 0; x < WIDTH; x++) {
-                    pico_unicorn.set_pixel(x, y, babi[i++], babi[i++], babi[i++]);
-                }
-            }
-        }
-        printf("said babi\n");
-        vTaskDelay(1000);
+        printf("displayed it!\n");
     }
 }
 
 void launch_tasks() {
-//    TaskHandle_t print_counter_value_task;
-//    xTaskCreate(print_counter_value_main,
-//                "print_counter_value_task",
-//                configMINIMAL_STACK_SIZE,
-//                nullptr,
-//                TASK_PRIORITY,
-//                &print_counter_value_task);
-
-//    TaskHandle_t increment_counter_value_task;
-//    xTaskCreate(increment_counter_value_main,
-//                "increment_counter_value_task",
-//                configMINIMAL_STACK_SIZE,
-//                nullptr,
-//                TASK_PRIORITY,
-//                &increment_counter_value_task);
-
-//    TaskHandle_t stats_task;
-//    xTaskCreate(stats_main,
-//                "stats_task",
-//                configMINIMAL_STACK_SIZE,
-//                nullptr,
-//                TASK_PRIORITY,
-//                &stats_task);
+    led_command_queue = xQueueCreate( 16, sizeof(CLICommand));
 
     TaskHandle_t cli_task;
     xTaskCreate(cli_main,
@@ -178,7 +181,6 @@ void launch_tasks() {
                 nullptr,
                 TASK_PRIORITY,
                 &cli_task);
-
 
     TaskHandle_t leds_task;
     xTaskCreate(leds_main,
