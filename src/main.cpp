@@ -8,7 +8,6 @@ using namespace pimoroni;
 #include "FreeRTOS.h"
 #include "task.h"
 
-#include "smile.h"
 #include "oi.h"
 #include "babi.h"
 
@@ -101,6 +100,14 @@ void increment_counter_value_main([[maybe_unused]] void *params){
 }
 
 [[noreturn]]
+void cli_main([[maybe_unused]] void *params) {
+    while (true) {
+        task_stats();
+        vTaskDelay(1000);
+    }
+}
+
+[[noreturn]]
 void leds_main([[maybe_unused]] void *params){
 
     const int WIDTH = 16;
@@ -122,7 +129,7 @@ void leds_main([[maybe_unused]] void *params){
             }
         }
         printf("said oi\n");
-        sleep_ms(1000);
+        vTaskDelay(1000);
 
         pico_unicorn.clear();
         printf("About to say babi\n");
@@ -135,34 +142,43 @@ void leds_main([[maybe_unused]] void *params){
             }
         }
         printf("said babi\n");
-        sleep_ms(1000);
+        vTaskDelay(1000);
     }
 }
 
 void launch_tasks() {
-    TaskHandle_t print_counter_value_task;
-    xTaskCreate(print_counter_value_main,
-                "print_counter_value_task",
-                configMINIMAL_STACK_SIZE,
-                nullptr,
-                TASK_PRIORITY,
-                &print_counter_value_task);
+//    TaskHandle_t print_counter_value_task;
+//    xTaskCreate(print_counter_value_main,
+//                "print_counter_value_task",
+//                configMINIMAL_STACK_SIZE,
+//                nullptr,
+//                TASK_PRIORITY,
+//                &print_counter_value_task);
 
-    TaskHandle_t increment_counter_value_task;
-    xTaskCreate(increment_counter_value_main,
-                "increment_counter_value_task",
-                configMINIMAL_STACK_SIZE,
-                nullptr,
-                TASK_PRIORITY,
-                &increment_counter_value_task);
+//    TaskHandle_t increment_counter_value_task;
+//    xTaskCreate(increment_counter_value_main,
+//                "increment_counter_value_task",
+//                configMINIMAL_STACK_SIZE,
+//                nullptr,
+//                TASK_PRIORITY,
+//                &increment_counter_value_task);
 
-    TaskHandle_t stats_task;
-    xTaskCreate(stats_main,
-                "stats_task",
+//    TaskHandle_t stats_task;
+//    xTaskCreate(stats_main,
+//                "stats_task",
+//                configMINIMAL_STACK_SIZE,
+//                nullptr,
+//                TASK_PRIORITY,
+//                &stats_task);
+
+    TaskHandle_t cli_task;
+    xTaskCreate(cli_main,
+                "cli_task",
                 configMINIMAL_STACK_SIZE,
                 nullptr,
                 TASK_PRIORITY,
-                &stats_task);
+                &cli_task);
+
 
     TaskHandle_t leds_task;
     xTaskCreate(leds_main,
