@@ -8,6 +8,7 @@ using namespace pimoroni;
 #include "FreeRTOS.h"
 #include "task.h"
 #include <queue.h>
+#include <cstring>
 
 #include "oi.h"
 #include "babi.h"
@@ -122,24 +123,42 @@ void increment_counter_value_main([[maybe_unused]] void *params){
 void cli_main([[maybe_unused]] void *params) {
     while (true) {
         BaseType_t rc;
+        char line[256];
+
+        printf("$ ");
+
+        char latest_char = '\0';
+        for (char *cursor = line; latest_char != '\r'; ) {
+            int aChar = getchar();
+            printf("%c", aChar);
+            latest_char = aChar;
+            if (latest_char == '\r') {
+                *cursor++ = '\0';
+            } else {
+                *cursor++ = latest_char;
+            }
+        }
+        printf("\n");
 
 //        task_stats();
-        CLICommand oi_command = CLICommand(oi);
 
-        rc = xQueueSendToBack(led_command_queue, (void *) &oi_command, 0);
-        if (rc != pdTRUE) {
-            printf("Failed to send message: %d\n", rc);
+        // TODO pretty sure we could try some C++ string stuff here and make this marginally less hellish...
+
+        if (strcmp(line, "oi") == 0) {
+            CLICommand oi_command = CLICommand(oi);
+
+            rc = xQueueSendToBack(led_command_queue, (void *) &oi_command, 0);
+            if (rc != pdTRUE) {
+                printf("Failed to send message: %d\n", rc);
+            }
+        } else if (strcmp(line, "babi") == 0) {
+            CLICommand babi_command = CLICommand(babi);
+
+            rc = xQueueSendToBack(led_command_queue, (void *) &babi_command, 0);
+            if (rc != pdTRUE) {
+                printf("Failed to send message: %d\n", rc);
+            }
         }
-        vTaskDelay(200);
-
-
-        CLICommand babi_command = CLICommand(babi);
-
-        rc = xQueueSendToBack(led_command_queue, (void *) &babi_command, 0);
-        if (rc != pdTRUE) {
-            printf("Failed to send message: %d\n", rc);
-        }
-        vTaskDelay(200);
     }
 }
 
@@ -154,12 +173,7 @@ void leds_main([[maybe_unused]] void *params){
     while (true) {
         CLICommand command;
         BaseType_t rc = xQueueReceive(led_command_queue, (void *)&command, 1000);
-        if (rc != pdTRUE) {
-            printf("Failed to read from queue: %d\n", rc);
-        }
-
-        printf("Received command, about to display...\n");
-        {
+        if (rc == pdTRUE) {
             int i = 0;
             for (int y = 0; y < HEIGHT; y++) {
                 for (int x = 0; x < WIDTH; x++) {
@@ -167,7 +181,6 @@ void leds_main([[maybe_unused]] void *params){
                 }
             }
         }
-        printf("displayed it!\n");
     }
 }
 
