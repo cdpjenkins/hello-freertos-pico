@@ -3,6 +3,8 @@
 
 #include "pico_unicorn.hpp"
 
+#include "Agent.hpp"
+
 struct LEDsCommand {
     explicit LEDsCommand() : pixels(nullptr) {}
     explicit LEDsCommand(const unsigned char *string) : pixels(string) {}
@@ -10,7 +12,7 @@ struct LEDsCommand {
     const unsigned char* pixels;
 };
 
-class LEDsAgent {
+class LEDsAgent : Agent {
 public:
     LEDsAgent();
 
