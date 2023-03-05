@@ -14,9 +14,6 @@ public:
     static void entry_point_static_function(void *params);
 protected:
     virtual void task_main() = 0;
-
-protected:
-    QueueHandle_t command_queue;
 private:
     TaskHandle_t leds_task;
     const char *task_name;

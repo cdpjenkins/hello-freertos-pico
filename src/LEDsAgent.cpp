@@ -14,6 +14,7 @@ LEDsAgent::LEDsAgent()
         configMINIMAL_STACK_SIZE,
         TASK_PRIORITY)
 {
+    command_queue = xQueueCreate(16, sizeof(LEDsCommand));
 }
 
 [[noreturn]]

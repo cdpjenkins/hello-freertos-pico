@@ -32,6 +32,8 @@ private:
 
     pimoroni::PicoUnicorn pico_unicorn;
 
+protected:
+    QueueHandle_t command_queue;
 };
 
 #endif //HELLO_FREERTOS_PICO_LEDSAGENT_HPP
