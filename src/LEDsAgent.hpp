@@ -3,9 +3,9 @@
 
 #include "pico_unicorn.hpp"
 
-struct CLICommand {
-    explicit CLICommand() : pixels(nullptr) {}
-    explicit CLICommand(const unsigned char *string) : pixels(string) {}
+struct LEDsCommand {
+    explicit LEDsCommand() : pixels(nullptr) {}
+    explicit LEDsCommand(const unsigned char *string) : pixels(string) {}
 
     const unsigned char* pixels;
 };
@@ -15,7 +15,7 @@ public:
     LEDsAgent();
 
     void start();
-    void send(CLICommand *pCommand);
+    void send(LEDsCommand *pCommand);
 
     // TODO - maybe we could turn the function that calls this into a static function...
     [[noreturn]]

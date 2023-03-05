@@ -11,7 +11,7 @@ void leds_main(void *params){
 }
 
 LEDsAgent::LEDsAgent() {
-    led_command_queue = xQueueCreate( 16, sizeof(CLICommand));
+    led_command_queue = xQueueCreate( 16, sizeof(LEDsCommand));
 }
 
 void LEDsAgent::start() {
@@ -31,7 +31,7 @@ void LEDsAgent::task_main() {
     pico_unicorn.init();
 
     while (true) {
-        CLICommand command;
+        LEDsCommand command;
         BaseType_t rc = xQueueReceive(led_command_queue, (void *)&command, 1000);
         if (rc == pdTRUE) {
             int i = 0;
@@ -45,7 +45,7 @@ void LEDsAgent::task_main() {
 
 }
 
-void LEDsAgent::send(CLICommand *pCommand) {
+void LEDsAgent::send(LEDsCommand *pCommand) {
     BaseType_t rc = xQueueSendToBack(led_command_queue, pCommand, 0);
     if (rc != pdTRUE) {
         printf("Failed to send message: %d\n", rc);
