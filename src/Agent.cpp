@@ -9,7 +9,7 @@
 
 #include "LEDsAgent.hpp"
 
-Agent::Agent(void (*entryPoint)(void *), const char *taskName, uint32_t stackDepth, UBaseType_t taskPriority)
+Agent::Agent(const char *taskName, uint32_t stackDepth, UBaseType_t taskPriority)
         : task_name(taskName), stack_depth(stackDepth), task_priority(taskPriority)
 {
     command_queue = xQueueCreate(16, sizeof(LEDsCommand));

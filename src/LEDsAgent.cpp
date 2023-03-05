@@ -8,9 +8,11 @@
 
 #include "Agent.hpp"
 
-LEDsAgent::LEDsAgent(void (*entryPoint)(void *), const char *taskName, uint32_t stackDepth,
-                     UBaseType_t taskPriority)
-    : Agent(entryPoint, taskName, stackDepth, taskPriority)
+LEDsAgent::LEDsAgent()
+    : Agent(
+        "leds_task",
+        configMINIMAL_STACK_SIZE,
+        TASK_PRIORITY)
 {
 }
 

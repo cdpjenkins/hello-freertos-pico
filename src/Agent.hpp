@@ -8,7 +8,7 @@
 
 class Agent {
 public:
-    Agent(void (*entryPoint)(void *), const char *taskName, uint32_t stackDepth, UBaseType_t taskPriority);
+    Agent(const char *taskName, uint32_t stackDepth, UBaseType_t taskPriority);
     void start();
 
     static void entry_point_static_function(void *params);

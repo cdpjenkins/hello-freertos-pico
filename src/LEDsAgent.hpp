@@ -17,8 +17,7 @@ struct LEDsCommand {
 
 class LEDsAgent : public Agent {
 public:
-    LEDsAgent(void (*entryPoint)(void *), const char *taskName, uint32_t stackDepth,
-              UBaseType_t taskPriority);
+    LEDsAgent();
 
     static const int WIDTH = 16;
     static const int HEIGHT = 7;
