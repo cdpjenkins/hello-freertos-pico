@@ -13,6 +13,7 @@ using namespace pimoroni;
 #include "oi.h"
 #include "babi.h"
 #include "clear.h"
+#include "LEDsAgent.hpp"
 
 #define TASK_PRIORITY		( tskIDLE_PRIORITY + 1UL )
 
@@ -23,25 +24,8 @@ using namespace pimoroni;
 
 volatile int counter = 0;
 
-PicoUnicorn pico_unicorn;
-
-struct CLICommand {
-    CLICommand() :
-        pixels(nullptr)
-    {
-
-    }
-
-    explicit CLICommand(const unsigned char *string) :
-        pixels(string)
-    {
-
-    }
-
-    const unsigned char* pixels;
-};
-
-QueueHandle_t led_command_queue;
+// TODO - ultimately this won't need to be global; we'll pass a reference to the CLI task
+LEDsAgent leds_agent;
 
 void task_stats() {
     TaskStatus_t *pxTaskStatusArray;
@@ -145,56 +129,20 @@ void cli_main([[maybe_unused]] void *params) {
 
         if (strcmp(line, "oi") == 0) {
             CLICommand oi_command = CLICommand(oi);
-
-            rc = xQueueSendToBack(led_command_queue, (void *) &oi_command, 0);
-            if (rc != pdTRUE) {
-                printf("Failed to send message: %d\n", rc);
-            }
+            leds_agent.send(&oi_command);
         } else if (strcmp(line, "babi") == 0) {
             CLICommand babi_command = CLICommand(babi);
-
-            rc = xQueueSendToBack(led_command_queue, (void *) &babi_command, 0);
-            if (rc != pdTRUE) {
-                printf("Failed to send message: %d\n", rc);
-            }
+            leds_agent.send(&babi_command);
         } else if (strcmp(line, "clear") == 0) {
             CLICommand clear_command = CLICommand(clear);
-
-            rc = xQueueSendToBack(led_command_queue, (void *) &clear_command, 0);
-            if (rc != pdTRUE) {
-                printf("Failed to send message: %d\n", rc);
-            }
+            leds_agent.send(&clear_command);
         } else if (strcmp(line, "stats") == 0) {
             task_stats();
         }
     }
 }
 
-[[noreturn]]
-void leds_main([[maybe_unused]] void *params){
-
-    const int WIDTH = 16;
-    const int HEIGHT = 7;
-
-    pico_unicorn.init();
-
-    while (true) {
-        CLICommand command;
-        BaseType_t rc = xQueueReceive(led_command_queue, (void *)&command, 1000);
-        if (rc == pdTRUE) {
-            int i = 0;
-            for (int y = 0; y < HEIGHT; y++) {
-                for (int x = 0; x < WIDTH; x++) {
-                    pico_unicorn.set_pixel(x, y, command.pixels[i++], command.pixels[i++], command.pixels[i++]);
-                }
-            }
-        }
-    }
-}
-
 void launch_tasks() {
-    led_command_queue = xQueueCreate( 16, sizeof(CLICommand));
-
     TaskHandle_t cli_task;
     xTaskCreate(cli_main,
                 "cli_task",
@@ -203,13 +151,7 @@ void launch_tasks() {
                 TASK_PRIORITY,
                 &cli_task);
 
-    TaskHandle_t leds_task;
-    xTaskCreate(leds_main,
-                "leds_task",
-                configMINIMAL_STACK_SIZE,
-                nullptr,
-                TASK_PRIORITY,
-                &leds_task);
+    leds_agent.start();
 
     vTaskStartScheduler();
 }
