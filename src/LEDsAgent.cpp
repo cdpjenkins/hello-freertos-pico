@@ -4,22 +4,28 @@
 
 #include "LEDsAgent.hpp"
 
-void leds_main(void *params){
+void leds_main(void *params) {
     LEDsAgent *agent = static_cast<LEDsAgent *>(params);
 
     agent->task_main();
 }
 
-LEDsAgent::LEDsAgent() {
+LEDsAgent::LEDsAgent(void (*entryPoint)(void *), const char *taskName, uint32_t stackDepth,
+                     UBaseType_t taskPriority)
+    : entry_point(entryPoint),
+      task_name(taskName),
+      stack_depth(stackDepth),
+      task_priority(taskPriority)
+{
     led_command_queue = xQueueCreate( 16, sizeof(LEDsCommand));
 }
 
 void LEDsAgent::start() {
-    BaseType_t rc = xTaskCreate(leds_main,
-                                "leds_task",
-                                configMINIMAL_STACK_SIZE,
+    BaseType_t rc = xTaskCreate(entry_point,
+                                task_name,
+                                stack_depth,
                                 this,
-                                TASK_PRIORITY,
+                                task_priority,
                                 &leds_task);
     if (rc != pdPASS) {
         printf("urgh failed to start LEDsAgent task: %d\n", rc);

@@ -25,7 +25,7 @@ using namespace pimoroni;
 volatile int counter = 0;
 
 // TODO - ultimately this won't need to be global; we'll pass a reference to the CLI task
-LEDsAgent leds_agent;
+LEDsAgent leds_agent(leds_main, "leds_task", configMINIMAL_STACK_SIZE, TASK_PRIORITY);
 
 void task_stats() {
     TaskStatus_t *pxTaskStatusArray;

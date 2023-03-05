@@ -1,10 +1,8 @@
 #ifndef HELLO_FREERTOS_PICO_AGENT_HPP
 #define HELLO_FREERTOS_PICO_AGENT_HPP
 
-
 class Agent {
 
 };
-
 
 #endif //HELLO_FREERTOS_PICO_AGENT_HPP
