@@ -29,12 +29,6 @@ public:
     static const int WIDTH = 16;
     static const int HEIGHT = 7;
 
-protected:
-    void (*entry_point)(void *);
-    const char *task_name;
-    uint32_t stack_depth;
-    UBaseType_t task_priority;
-
 private:
     static const UBaseType_t TASK_PRIORITY = tskIDLE_PRIORITY + 1UL;
 

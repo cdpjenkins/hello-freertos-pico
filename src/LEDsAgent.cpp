@@ -3,6 +3,7 @@
 #include <cstdio>
 
 #include "LEDsAgent.hpp"
+#include "Agent.hpp"
 
 void leds_main(void *params) {
     LEDsAgent *agent = static_cast<LEDsAgent *>(params);
@@ -12,10 +13,7 @@ void leds_main(void *params) {
 
 LEDsAgent::LEDsAgent(void (*entryPoint)(void *), const char *taskName, uint32_t stackDepth,
                      UBaseType_t taskPriority)
-    : entry_point(entryPoint),
-      task_name(taskName),
-      stack_depth(stackDepth),
-      task_priority(taskPriority)
+    : Agent(entryPoint, taskName, stackDepth, taskPriority)
 {
     led_command_queue = xQueueCreate( 16, sizeof(LEDsCommand));
 }
