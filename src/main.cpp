@@ -141,8 +141,6 @@ void cli_main([[maybe_unused]] void *params) {
         }
         printf("\n");
 
-//        task_stats();
-
         // TODO pretty sure we could try some C++ string stuff here and make this marginally less hellish...
 
         if (strcmp(line, "oi") == 0) {
@@ -166,6 +164,8 @@ void cli_main([[maybe_unused]] void *params) {
             if (rc != pdTRUE) {
                 printf("Failed to send message: %d\n", rc);
             }
+        } else if (strcmp(line, "stats") == 0) {
+            task_stats();
         }
     }
 }
