@@ -8,12 +8,6 @@
 
 #include "Agent.hpp"
 
-void leds_main(void *params) {
-    LEDsAgent *agent = static_cast<LEDsAgent *>(params);
-
-    agent->task_main();
-}
-
 LEDsAgent::LEDsAgent(void (*entryPoint)(void *), const char *taskName, uint32_t stackDepth,
                      UBaseType_t taskPriority)
     : Agent(entryPoint, taskName, stackDepth, taskPriority)
@@ -44,4 +38,9 @@ void LEDsAgent::send(LEDsCommand *pCommand) {
     if (rc != pdTRUE) {
         printf("Failed to send message: %d\n", rc);
     }
+}
+
+void LEDsAgent::entry_point(void *params) {
+
+    static_cast<LEDsAgent *>(params)->task_main();
 }
