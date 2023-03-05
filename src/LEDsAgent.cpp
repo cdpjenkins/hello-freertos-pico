@@ -40,7 +40,3 @@ void LEDsAgent::send(LEDsCommand *pCommand) {
     }
 }
 
-void LEDsAgent::entry_point(void *params) {
-
-    static_cast<LEDsAgent *>(params)->task_main();
-}

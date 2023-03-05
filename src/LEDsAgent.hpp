@@ -20,15 +20,15 @@ public:
     LEDsAgent(void (*entryPoint)(void *), const char *taskName, uint32_t stackDepth,
               UBaseType_t taskPriority);
 
-    static void entry_point(void *params);
-
     static const int WIDTH = 16;
     static const int HEIGHT = 7;
 
     void send(LEDsCommand *pCommand);
-private:
+
     [[noreturn]]
     void task_main();
+
+private:
     static const UBaseType_t TASK_PRIORITY = tskIDLE_PRIORITY + 1UL;
 
     pimoroni::PicoUnicorn pico_unicorn;

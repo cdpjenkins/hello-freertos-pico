@@ -14,6 +14,7 @@ using namespace pimoroni;
 #include "babi.h"
 #include "clear.h"
 #include "LEDsAgent.hpp"
+#include "Agent.hpp"
 
 #define TASK_PRIORITY		( tskIDLE_PRIORITY + 1UL )
 
@@ -25,7 +26,7 @@ using namespace pimoroni;
 volatile int counter = 0;
 
 // TODO - ultimately this won't need to be global; we'll pass a reference to the CLI task
-LEDsAgent leds_agent(LEDsAgent::entry_point, "leds_task", configMINIMAL_STACK_SIZE, TASK_PRIORITY);
+LEDsAgent leds_agent(Agent::entry_point_static_function, "leds_task", configMINIMAL_STACK_SIZE, TASK_PRIORITY);
 
 void task_stats() {
     TaskStatus_t *pxTaskStatusArray;

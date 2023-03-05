@@ -11,11 +11,14 @@ public:
     Agent(void (*entryPoint)(void *), const char *taskName, uint32_t stackDepth, UBaseType_t taskPriority);
     void start();
 
+    static void entry_point_static_function(void *params);
+protected:
+    virtual void task_main() = 0;
+
 protected:
     QueueHandle_t command_queue;
 private:
     TaskHandle_t leds_task;
-    void (*entry_point)(void *);
     const char *task_name;
     uint32_t stack_depth;
     UBaseType_t task_priority;

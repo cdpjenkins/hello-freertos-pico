@@ -10,13 +10,13 @@
 #include "LEDsAgent.hpp"
 
 Agent::Agent(void (*entryPoint)(void *), const char *taskName, uint32_t stackDepth, UBaseType_t taskPriority)
-        : entry_point(entryPoint), task_name(taskName), stack_depth(stackDepth), task_priority(taskPriority)
+        : task_name(taskName), stack_depth(stackDepth), task_priority(taskPriority)
 {
     command_queue = xQueueCreate(16, sizeof(LEDsCommand));
 }
 
 void Agent::start() {
-    BaseType_t rc = xTaskCreate(entry_point,
+    BaseType_t rc = xTaskCreate(entry_point_static_function,
                                 task_name,
                                 stack_depth,
                                 this,
@@ -27,3 +27,6 @@ void Agent::start() {
     }
 }
 
+void Agent::entry_point_static_function(void *params) {
+    static_cast<LEDsAgent *>(params)->task_main();
+}
