@@ -8,11 +8,10 @@
 
 #include "Agent.hpp"
 
-LEDsAgent::LEDsAgent()
-    : Agent(
-        "leds_task",
-        configMINIMAL_STACK_SIZE,
-        TASK_PRIORITY)
+LEDsAgent::LEDsAgent() :
+        Agent("leds_task",
+              configMINIMAL_STACK_SIZE,
+              TASK_PRIORITY)
 {
     command_queue = xQueueCreate(16, sizeof(LEDsCommand));
 }

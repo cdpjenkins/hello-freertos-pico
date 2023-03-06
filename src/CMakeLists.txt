@@ -1,6 +1,7 @@
 add_executable(${NAME}
         main.cpp
 		Agent.cpp
+		CLIAgent.cpp
         LEDsAgent.cpp)
 
 include(libraries/pico_unicorn/pico_unicorn)
