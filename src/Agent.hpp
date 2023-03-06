@@ -1,6 +1,7 @@
 #ifndef HELLO_FREERTOS_PICO_AGENT_HPP
 #define HELLO_FREERTOS_PICO_AGENT_HPP
 
+#include <FreeRTOS.h>
 #include <portmacro.h>
 #include <task.h>
 #include <queue.h>

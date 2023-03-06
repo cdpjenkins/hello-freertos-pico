@@ -3,15 +3,17 @@
 
 #include "Agent.hpp"
 #include "LEDsAgent.hpp"
+#include "CommandInterpreterAgent.hpp"
 
 class CLIAgent : public Agent {
 public:
-    explicit CLIAgent(LEDsAgent &agent);
+    CLIAgent(LEDsAgent &agent, CommandInterpreterAgent &interpreterAgent);
 
     [[noreturn]]
     void task_main() override;
 private:
     LEDsAgent &leds_agent;
+    CommandInterpreterAgent &interpreter_agent;
 
     static const UBaseType_t TASK_PRIORITY = tskIDLE_PRIORITY + 1UL;
 };

@@ -11,11 +11,12 @@
 #include "babi.h"
 #include "clear.h"
 
-CLIAgent::CLIAgent(LEDsAgent &agent) :
+CLIAgent::CLIAgent(LEDsAgent &agent, CommandInterpreterAgent &interpreterAgent) :
     Agent("cli_task",
           configMINIMAL_STACK_SIZE * 2,
           TASK_PRIORITY),
-    leds_agent(agent)
+    leds_agent(agent),
+    interpreter_agent(interpreterAgent)
 {
 
 }
@@ -96,7 +97,8 @@ void CLIAgent::task_main() {
             leds_agent.send(&clear_command);
         } else if (strcmp(line, "stats") == 0) {
             task_stats();
+        } else if (strcmp(line, "send") == 0) {
+            interpreter_agent.send_command((char *)"cheese ston");
         }
     }
-
 }

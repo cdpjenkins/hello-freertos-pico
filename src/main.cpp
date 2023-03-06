@@ -10,12 +10,16 @@
 #include "clear.h"
 #include "LEDsAgent.hpp"
 #include "CLIAgent.hpp"
+#include "CommandInterpreterAgent.hpp"
 
 void launch_tasks() {
     LEDsAgent leds_agent;
     leds_agent.start();
 
-    CLIAgent cli_agent(leds_agent);
+    CommandInterpreterAgent command_interpreter_agent;
+    command_interpreter_agent.start();
+
+    CLIAgent cli_agent(leds_agent, command_interpreter_agent);
     cli_agent.start();
 
     vTaskStartScheduler();
