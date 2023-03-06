@@ -66,7 +66,6 @@ void task_stats() {
 
 void CLIAgent::task_main() {
     while (true) {
-        BaseType_t rc;
         char line[256];
 
         printf("$ ");
@@ -87,13 +86,13 @@ void CLIAgent::task_main() {
         // TODO pretty sure we could try some C++ string stuff here and make this marginally less hellish...
 
         if (strcmp(line, "oi") == 0) {
-            LEDsCommand oi_command = LEDsCommand(oi);
+            auto oi_command = LEDsCommand(oi);
             leds_agent.send(&oi_command);
         } else if (strcmp(line, "babi") == 0) {
-            LEDsCommand babi_command = LEDsCommand(babi);
+            auto babi_command = LEDsCommand(babi);
             leds_agent.send(&babi_command);
         } else if (strcmp(line, "clear") == 0) {
-            LEDsCommand clear_command = LEDsCommand(clear);
+            auto clear_command = LEDsCommand(clear);
             leds_agent.send(&clear_command);
         } else if (strcmp(line, "stats") == 0) {
             task_stats();

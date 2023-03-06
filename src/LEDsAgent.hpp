@@ -25,7 +25,7 @@ public:
     void send(LEDsCommand *pCommand);
 
     [[noreturn]]
-    void task_main();
+    void task_main() override;
 
 private:
     static const UBaseType_t TASK_PRIORITY = tskIDLE_PRIORITY + 1UL;

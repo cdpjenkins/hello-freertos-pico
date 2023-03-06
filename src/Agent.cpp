@@ -2,16 +2,18 @@
 #include <cstdio>
 
 #include "FreeRTOS.h"
-#include <queue.h>
 #include <task.h>
 
 #include "Agent.hpp"
 
 #include "LEDsAgent.hpp"
 
-Agent::Agent(const char *taskName, uint32_t stackDepth, UBaseType_t taskPriority)
-        : task_name(taskName), stack_depth(stackDepth), task_priority(taskPriority)
+Agent::Agent(const char *taskName, uint32_t stackDepth, UBaseType_t taskPriority) :
+    task_name(taskName),
+    stack_depth(stackDepth),
+    task_priority(taskPriority)
 {
+
 }
 
 void Agent::start() {
@@ -22,7 +24,7 @@ void Agent::start() {
                                 task_priority,
                                 &leds_task);
     if (rc != pdPASS) {
-        printf("urgh failed to start LEDsAgent task: %d\n", rc);
+        printf("urgh failed to start LEDsAgent task: %ld\n", rc);
     }
 }
 

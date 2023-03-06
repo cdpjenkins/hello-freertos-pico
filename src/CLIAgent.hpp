@@ -6,10 +6,10 @@
 
 class CLIAgent : public Agent {
 public:
-    CLIAgent(LEDsAgent &agent);
+    explicit CLIAgent(LEDsAgent &agent);
 
     [[noreturn]]
-    void task_main();
+    void task_main() override;
 private:
     LEDsAgent &leds_agent;
 
