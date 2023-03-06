@@ -16,7 +16,7 @@ void launch_tasks() {
     LEDsAgent leds_agent;
     leds_agent.start();
 
-    CommandInterpreterAgent command_interpreter_agent;
+    CommandInterpreterAgent command_interpreter_agent(leds_agent);
     command_interpreter_agent.start();
 
     CLIAgent cli_agent(leds_agent, command_interpreter_agent);
